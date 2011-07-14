@@ -9,23 +9,37 @@ class Floor{
 	ArrayList apartments;
 	
 	public Floor(int floor_number){
+		int nof_floors = 4;
 		this.floor_number = floor_number;
 		x = 10;
-		y = 50 * floor_number;
+		y = (height/nof_floors)*floor_number-25; //50 * floor_number;
 		button_x = width/2-10;
 		println("Floor number " + floor_number + " y " + y);
 		
 		apartments = new ArrayList();
-
+		
+		/** Add apartments to each floor **/
+		for(int i=0; i<4; i++){
+			Apartment a = new Apartment(this, i);
+			apartments.add(a);
+		}
 	}
 	
 	public void update(float delta){
-		
+		for(int i=0; i<apartments.size(); i++){
+			Apartment a = (Apartment)apartments.get(i);
+			a.update(delta);
+		}		
 	}
 	
 	public void render(){
+		// render apartments
+		for(int i=0; i<apartments.size(); i++){
+			Apartment a = (Apartment)apartments.get(i);
+			a.render();
+		}
+		
 		fill(255);
-		//rect(x, y, (width/2)-5, y+10);
 		rect(x, y, width-(x*2), 4);
 		
 		// Render elevator button
@@ -51,4 +65,10 @@ class Floor{
 	public int getButtonX(){
 		return button_x;
 	}
+	public Apartment getRandomApartment(){
+		int i = (int)random(0,apartments.size());
+		Apartment a = (Apartment)apartments.get(i);
+		return a;
+	}
+
 }

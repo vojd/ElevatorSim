@@ -13,8 +13,8 @@ class Apartment{
 		floor = f;
 
 		w = 10;
-		h = 20;		
-		x = width/4 * id + 30;
+		h = 26;
+		x = width/4 * id + 50;
 		y = floor.getY()-h;
 
 	}
@@ -24,9 +24,18 @@ class Apartment{
 	}
 	
 	public void render(){
-		println("render apat" + x + " " + y + " " + w + " " + h);
+		//println("render apat" + x + " " + y + " " + w + " " + h);
 		fill(0,255,255);
 		rect(x,y,w,h);
 	}
-	
+
+	public int getX(){
+		return x;
+	}
+	public int getY(){
+		return y;
+	}
+	public int getW(){
+		return w;
+	}
 }

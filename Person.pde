@@ -2,6 +2,7 @@ class Person{
 	
 	int x;
 	int y;
+	int y_offset;
 	int vel;
 	int dir;
 	
@@ -11,23 +12,41 @@ class Person{
 	Boolean button_pushed;
 	Boolean reached_exit;
 	Elevator elevator;
+	Apartment start_apartment;
+	Apartment destination_apartment;
+	
 	String state;
+	int nof_frames = 4;
+	int frame = 0;
+	int nof_samples = 2;
+	int sample = 0;
+	PImage[] sprites = new PImage[nof_frames];
+	AudioSample[] samples = new AudioSample[nof_samples];
 	
 	Person(Elevator e, Floor cf, Floor df){
 		elevator = e;
 		println("elevator " + elevator);
 		current_floor = cf;
 		destination_floor = df;
-		//x = 20;
-		x = width/2 - 20;
-		y = current_floor.getY();
+		start_apartment = cf.getRandomApartment();
+		destination_apartment = df.getRandomApartment();
 		vel = 10;
 		inside_elevator = false;
 		button_pushed = false;
 		reached_exit = false;
 		state = "";
 		
-
+		sprites[0] = loadImage("person_01.png");
+		sprites[1] = loadImage("person_02.png");
+		sprites[2] = loadImage("person_03.png");
+		sprites[3] = loadImage("person_02.png");
+		y_offset = sprites[3].height;
+		//x = width/2 - 20;
+		x = start_apartment.getX();
+		y = current_floor.getY()-y_offset;
+		
+		samples[0] = minim.loadSample("pr-b-01.wav");
+		samples[1] = minim.loadSample("pr-b-02.wav");
 	}
 	
 	public void update(float delta){
@@ -103,7 +122,6 @@ class Person{
 		}else{
 			return false;
 		}
-
 	}
 	
 	public Boolean insideElevator(){
@@ -114,14 +132,25 @@ class Person{
 	}
 	
 	public Boolean reachedElevator(){
-		if(x==180){
+		if(x>=current_floor.getButtonX() && x<=current_floor.getButtonX()+10 ){
 			state = "Reached elevator";
+			dir = 0;
 			return true;
 		}
 		return false;
 	}
 	
 	public void walkTowardsElevatorButton(){
+		/*
+		if(x<current_floor.getButtonX()){
+			dir=1;
+		}else if(x>current_floor.getButtonX()+10){
+			dir=-1;
+		}else{
+			dir=0;
+		}
+		*/
+
 		if(x<width/2-10){
 			dir=1;
 		}else if(x>width/2){
@@ -129,10 +158,10 @@ class Person{
 		}else{
 			dir=0;
 		}
+
 		if(dir!=0){
 			state = "walking towards elevator" + x;
 		}
-
 	}
 	
 	public Boolean elevatorDoorOpen(){
@@ -144,13 +173,19 @@ class Person{
 	
 	public void walkTowardsExit(){
 		state = "walking towards exit";
-		if(x>0){
-			dir=-1;
-		}else{
-			state = "Person reached the exit! hurra!";
-			reached_exit = true;
-		}
+		println("a>>" + x + " " + destination_apartment.getX());
+		// If user is inside the door
 
+		if(x>=destination_apartment.getX() && x<=destination_apartment.getX() + destination_apartment.getW()){
+			reached_exit = true;
+			println("reached exit!");
+		}else{
+			if(x>destination_apartment.getX()){
+				dir=-1;
+			}else if(x<destination_apartment.getX()){
+				dir=1;
+			}			
+		}
 	}
 	
 	public void enterElevator(){
@@ -181,18 +216,34 @@ class Person{
 		/* just wait */
 		if(insideElevator()){
 			x = elevator.getInsidePosition();
-			y = elevator.getFloorPosition();
+			y = elevator.getFloorPosition()-y_offset;
 		}
 		state = "waiting";
 	}
 	
+	
 	public void render(){
-
-		fill(255,0,0);
-		rect(x,y-5,5,5);
-		//text("From " + current_floor.floor_number + " to " + destination_floor.floor_number, 10,150);
-		//text("State " +state, 10,180);
+		image(sprites[frame], x, y);
+		if(dir!=0){
+			frame++;
+			if(frame>3){
+				frame=0;
+				/*
+				sample++;
+				if(sample>1){
+					sample=0;
+				}
+				samples[sample].trigger();
+				*/
+			}
+			samples[0].trigger();		
+		}
 	}
 	
-
+	public void cleanUp(){
+		for(int i=0; i<samples.length; i++){
+			samples[i].close();
+			
+		}
+	}
 }

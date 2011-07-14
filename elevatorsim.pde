@@ -1,4 +1,7 @@
 
+import ddf.minim.*;
+Minim minim;
+
 Elevator elevator;
 
 UI ui;
@@ -15,6 +18,7 @@ PFont font;
 
 void setup(){
 
+	minim = new Minim(this);
 	size(400,400);
 	background(0);
 	font = loadFont("Dialog-18.vlw");
@@ -61,7 +65,7 @@ void draw(){
 
 void update(float delta){
 
-	ui.update(delta);
+	//ui.update(delta);
 	elevator.update(delta);
 	for(int i=0; i<persons.size(); i++){
 		Person p = (Person) persons.get(i);
@@ -86,7 +90,7 @@ void render(){
 		p.render();
 	}
 	elevator.render();
-	ui.render();
+	//ui.render();
 }
 
 
@@ -144,5 +148,18 @@ void keyPressed(){
 	}
 		
 
+}
+
+void stop(){
+
+	// clean up sound resources
+	
+	for(int i=0; i<persons.size(); i++){
+		Person p = (Person)persons.get(i);
+		p.cleanUp();
+	}
+	
+	minim.stop();
+	super.stop();
 }
 

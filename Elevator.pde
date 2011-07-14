@@ -9,6 +9,7 @@ class Elevator{
 	int top;	// elevator top
 	int bottom;	// elevator height, bottom = y + height
 	int w;		// elevator width
+	int h;
 	int vel;	// velocity
 	int direction;	// movement direction
 	int current_floor;
@@ -35,8 +36,10 @@ class Elevator{
 		
 		x = width/2;
 		y = sf.getY()-20;
-		w = 20;
-		bottom = 20;		
+		w = 22;
+
+		h = 30;
+		bottom = h;
 		vel = 20;
 		direction = 0;
 		moving = false;
@@ -58,8 +61,6 @@ class Elevator{
 	}
 	
 	public void move(){
-		//Floor f = (Floor) elevator_floors.get(0);
-		//destination_floor = f.getFloorNumber();
 		Floor df;
 		try{
 			df = (Floor)elevator_floors.get(0);			
@@ -79,7 +80,6 @@ class Elevator{
 				openDoors();
 			}	
 		}
-
 	}
 	
 	public void moveUp(Floor destination_floor){
@@ -105,30 +105,29 @@ class Elevator{
 	public void openDoors(){
 		if(!doors_open){
 			doors_open = true;
-			println("open doors, welcome aboard");			
+			println("open doors, welcome aboard");
 		}
 	}
 	public void closeDoors(){
 		if(doors_open){
 			doors_open = false;
-			println("closing doors, dont get caught");			
+			println("closing doors, dont get caught");
 		}
 	}
 	
 	public void render(){
 
-		text("Current level: "+ current_floor, 10,40);	
-		if(elevator_floors.size() > 0){
-
-			text("Current " + current_floor + " next " + destination_floor.getFloorNumber(), 10,80);
-			text("elevator y " + y + " next_floor y " + destination_floor.getY(), 10,100);
-			
-			for(int i=0; i<elevator_floors.size(); i++){
-				Floor fl = (Floor)elevator_floors.get(i);
-				text("[ " + fl.getFloorNumber() + " ]", 10+ (i*40),60);
-			}
-		}
-		rect(x, y, w, bottom);
+		// render upper elevator cable
+		rect(x+(w/2)-2, 0, 5, y);
+		// render lower elevator cable
+		rect(x+(w/2)-2, y+h, 5, height);		
+		// render the elevator car
+		stroke(255);
+		line(x,y,x+w,y);
+		line(x+w,y,x+w,y+h);
+		line(x+w,y+h,x,y+h);
+		line(x,y+h,x,y);
+		stroke(0);
 	}
 
 	public void addFloor(int floor_number){
