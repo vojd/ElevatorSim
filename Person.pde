@@ -23,9 +23,10 @@ class Person{
 	PImage[] sprites = new PImage[nof_frames];
 	AudioSample[] samples = new AudioSample[nof_samples];
 	
+	
 	Person(Elevator e, Floor cf, Floor df){
 		elevator = e;
-		println("elevator " + elevator);
+
 		current_floor = cf;
 		destination_floor = df;
 		start_apartment = cf.getRandomApartment();
@@ -36,17 +37,15 @@ class Person{
 		reached_exit = false;
 		state = "";
 		
-		sprites[0] = loadImage("person_01.png");
-		sprites[1] = loadImage("person_02.png");
-		sprites[2] = loadImage("person_03.png");
-		sprites[3] = loadImage("person_02.png");
+		sprites = assets.getPersonSprites();
+		samples = assets.getPersonSamples();
+		
 		y_offset = sprites[3].height;
 		//x = width/2 - 20;
 		x = start_apartment.getX();
 		y = current_floor.getY()-y_offset;
 		
-		samples[0] = minim.loadSample("pr-b-01.wav");
-		samples[1] = minim.loadSample("pr-b-02.wav");
+
 	}
 	
 	public void update(float delta){
@@ -112,7 +111,6 @@ class Person{
 	public Boolean reachedFinalLevel(){
 
 		if(insideElevator() && elevator.current_floor == destination_floor.getFloorNumber()){
-			//println("person has not reached final level");
 			state = "reached final level";
 			current_floor = destination_floor;
 		}
@@ -228,22 +226,14 @@ class Person{
 			frame++;
 			if(frame>3){
 				frame=0;
-				/*
-				sample++;
-				if(sample>1){
-					sample=0;
-				}
-				samples[sample].trigger();
-				*/
 			}
-			samples[0].trigger();		
+			samples[0].trigger();
 		}
 	}
-	
+
 	public void cleanUp(){
 		for(int i=0; i<samples.length; i++){
 			samples[i].close();
-			
 		}
 	}
 }

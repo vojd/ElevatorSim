@@ -47,7 +47,7 @@ class Floor{
 		rect(button_x, y-5, 5, 5);
 
 		fill(255);
-		text(floor_number, width-20, y-10);
+		//text(floor_number, width-20, y-10);
 
 
 	}

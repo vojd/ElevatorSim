@@ -16,10 +16,15 @@ int nof_people;
 
 PFont font;
 
+AssetsFactory assets;
+
+
+		
 void setup(){
 
 	minim = new Minim(this);
-	size(400,400);
+	assets = new AssetsFactory();
+	size(320, 480, P3D);
 	background(0);
 	font = loadFont("Dialog-18.vlw");
 	textFont(font);
@@ -43,6 +48,7 @@ public void spawnPerson(){
 	println("spawnPerson");
 	persons.add(generatePerson());
 }
+
 public Person generatePerson(){
 	int sf = (int)random(0, floors.size());
 	int df = sf;
@@ -158,6 +164,8 @@ void stop(){
 		Person p = (Person)persons.get(i);
 		p.cleanUp();
 	}
+	
+	elevator.cleanUp();
 	
 	minim.stop();
 	super.stop();

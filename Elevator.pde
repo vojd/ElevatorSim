@@ -21,6 +21,8 @@ class Elevator{
 	Boolean doors_open;
 	
 	int destination_floor_number;
+	AudioSample move_sound;
+	AudioSample door_sound;
 	
 	public Elevator(ArrayList floors, int start_floor){
 		/* start at the last floor by default*/
@@ -44,6 +46,9 @@ class Elevator{
 		direction = 0;
 		moving = false;
 		doors_open = false;
+		
+		move_sound = minim.loadSample("bs-b-05.wav");
+		door_sound = minim.loadSample("ar-a-01.wav");
 	}
 	
 	public void update(float delta){
@@ -85,7 +90,8 @@ class Elevator{
 	public void moveUp(Floor destination_floor){
 		moving=true;
 		if(y+bottom<destination_floor.getY()){
-			y+=10;
+			y+=20;
+			move_sound.trigger();
 		}else{
 			current_floor++;			
 		}
@@ -95,8 +101,10 @@ class Elevator{
 	public void moveDown(Floor destination_floor){
 		//Floor df = (Floor)elevator_floors.get(0);
 		moving = true;
+
 		if(y+bottom>destination_floor.getY()){
 			y-=10;
+			move_sound.trigger();
 		}else{
 			current_floor--;
 		}
@@ -105,6 +113,7 @@ class Elevator{
 	public void openDoors(){
 		if(!doors_open){
 			doors_open = true;
+			door_sound.trigger();
 			println("open doors, welcome aboard");
 		}
 	}
@@ -123,10 +132,15 @@ class Elevator{
 		rect(x+(w/2)-2, y+h, 5, height);		
 		// render the elevator car
 		stroke(255);
-		line(x,y,x+w,y);
-		line(x+w,y,x+w,y+h);
-		line(x+w,y+h,x,y+h);
-		line(x,y+h,x,y);
+		if(doors_open){
+			line(x,y,x+w,y);
+			line(x+w,y,x+w,y+h);
+			line(x+w,y+h,x,y+h);
+			line(x,y+h,x,y);			
+		}else{
+			fill(255);
+			rect(x,y,w,h);
+		}
 		stroke(0);
 	}
 
@@ -163,5 +177,9 @@ class Elevator{
 	public Boolean doorsOpen(){
 		return doors_open;
 	}
-	
+
+	public void cleanUp(){
+		move_sound.close();
+		door_sound.close();
+	}
 }
